@@ -26,7 +26,7 @@ object Main {
   sdpf -h [file|folder|url...] [-o out.pdf]
 
   ex:
-    spdf < curl http://google.com > out.pdf
+    spdf < curl www.google.com > out.pdf
     cat flyer.html | spdf -o flyer.pdf""")
   }
 
