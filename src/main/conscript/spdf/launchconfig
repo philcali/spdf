@@ -1,0 +1,11 @@
+[app]
+  version: 0.1.0
+  org: com.github.philcali
+  name: spdf
+  class: com.github.philcali.Script
+[scala]
+  version: 2.9.2
+[repositories]
+  local
+  maven-central
+  sonatype-releases: https://oss.sonatype.org/content/repositories/releases/
