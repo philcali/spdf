@@ -22,5 +22,3 @@ libraryDependencies <+= (sbtVersion) { v =>
           v % "provided"
   }
 }
-
-resolvers <+= sbtResolver

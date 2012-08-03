@@ -23,11 +23,18 @@ object Main {
     println("""
   spf v0.1.0, Copyright Philip Cali
 
-  sdpf -h [file|folder|url...] [-o out.pdf]
+  sdpf -i -h [file|folder|url...] [-o out.pdf]
+
+  -h   Prints this help
+  -i   Piped input for objects (files, folders, urls)
+  -o   Explicitly filename output
 
   ex:
-    spdf < curl www.google.com > out.pdf
-    cat flyer.html | spdf -o flyer.pdf""")
+    ls book/*.html | spdf cover.html -i > book.pdf
+    spdf < flyer.html > flyer.pdf
+    curl www.google.com | spdf > out.pdf
+    cat flyer.html | spdf -o flyer.pdf
+""")
   }
 
   def main(args: Array[String]) {
@@ -41,10 +48,24 @@ object Main {
     if (args.contains("-h")) {
       printHelp()
     } else {
-      val inputs = Output.replaceAllIn(full, "").split(" ")
+      val extra = if (args.contains("-i")) parseExtra() else Nil
+      val inputs = Output.replaceAllIn(full, "").split(" ") ++ extra
       process(if (inputs.isEmpty) None else Some(inputs), out)
     }
     0
+  }
+
+  def parseExtra() = {
+    import collection.mutable.ListBuffer
+
+    val reg = """\s*"""
+
+    def pump(ls: ListBuffer[String]): List[String] = Console.readLine match {
+      case line: String => line.trim.split(reg).foreach(ls.append(_)); pump(ls)
+      case _ => ls.toList
+    }
+
+    pump(ListBuffer[String]())
   }
 
   def isValid(src: Any) = allCatch.opt(src match {
@@ -75,7 +96,8 @@ object Main {
   }
 
   def flatten(src: Any): List[_] = src match {
-    case dir: File if dir.isDirectory => dir.listFiles.filter(_.isFile).toList
+    case dir: File if dir.isDirectory =>
+      dir.listFiles.filter(_.isFile).sortWith(_.getName < _.getName).toList
     case other => List(other)
   }
 
