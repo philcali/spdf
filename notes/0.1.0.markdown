@@ -1,0 +1,6 @@
+- Initial release
+- install with `cs philcali/spdf`
+- `spdf -h` for explanation and example uses
+
+__Note__: The conscript installation will actually execute spdf, which waits
+for stdin. You might need to kill the application with ^C, the first time.
