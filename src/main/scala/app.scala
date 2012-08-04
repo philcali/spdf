@@ -59,16 +59,15 @@ object Main {
   }
 
   def parseExtra() = {
-    import collection.mutable.ListBuffer
-
     val reg = """\s+"""
 
-    def pump(ls: ListBuffer[String]): List[String] = Console.readLine match {
-      case line: String => line.trim.split(reg).foreach(ls.append(_)); pump(ls)
-      case _ => ls.toList
+    // Efficiently builds List from stdin
+    def pump(ls: List[String]): List[String] = Console.readLine match {
+      case line: String => pump((line.trim.split(reg) :\ ls)(_ :: _))
+      case _ => ls.reverse
     }
 
-    pump(ListBuffer[String]())
+    pump(Nil)
   }
 
   def isValid(src: Any) = allCatch.opt(src match {
