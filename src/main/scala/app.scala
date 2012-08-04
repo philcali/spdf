@@ -19,18 +19,20 @@ import org.xml.sax.InputSource
 object Main {
   val Output = """\s*-o (.*\.pdf)\s*""".r
 
+  val Input = """\s*-i\s*""".r
+
   def printHelp() {
     println("""
-  spf v0.1.0, Copyright Philip Cali
+  spdf v0.1.0, Copyright Philip Cali
 
-  sdpf -i -h [file|folder|url...] [-o out.pdf]
+  sdpf -h [file|folder|url...] -i [-o out.pdf]
 
   -h   Prints this help
   -i   Piped input for objects (files, folders, urls)
   -o   Explicitly filename output
 
   ex:
-    ls book/*.html | spdf cover.html -i > book.pdf
+    find book | grep "html$" | spdf cover.html -i > book.pdf
     spdf < flyer.html > flyer.pdf
     curl www.google.com | spdf > out.pdf
     cat flyer.html | spdf -o flyer.pdf
@@ -49,7 +51,8 @@ object Main {
       printHelp()
     } else {
       val extra = if (args.contains("-i")) parseExtra() else Nil
-      val inputs = Output.replaceAllIn(full, "").split(" ") ++ extra
+      val cleaned = Input.replaceAllIn(Output.replaceAllIn(full, ""), "")
+      val inputs = cleaned.split(" ") ++ extra
       process(if (inputs.isEmpty) None else Some(inputs), out)
     }
     0
@@ -58,7 +61,7 @@ object Main {
   def parseExtra() = {
     import collection.mutable.ListBuffer
 
-    val reg = """\s*"""
+    val reg = """\s+"""
 
     def pump(ls: ListBuffer[String]): List[String] = Console.readLine match {
       case line: String => line.trim.split(reg).foreach(ls.append(_)); pump(ls)

@@ -12,7 +12,7 @@ cs philcali/spdf
 ## Usage
 
 ```
-sdpf -h [file|folder|url...] [-o out.pdf]
+sdpf -h [file|folder|url...] -i [-o out.pdf]
 ```
 
 The `url` must be in the form of `*://*`. The specified output file must be in
@@ -22,6 +22,8 @@ The utility was designed to place nice with other CL tools, so input and output
 can be piped and redirected (in fact, it is encouraged to do so).
 
 ```
+find book | grep "html$" | spdf cover.html -i > book.pdf
+
 cat flyer.html | spdf > out.pdf
 
 curl www.google.com | sdf > google.pdf
