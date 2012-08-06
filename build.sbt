@@ -4,10 +4,11 @@ organization := "com.github.philcali"
 
 version := "0.1.0"
 
+//resolvers += "Local Maven" at Path.userHome.asFile.toURI.toURL +  ".m2/repository"
+
 libraryDependencies ++= Seq(
   "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1",
-  "org.xhtmlrenderer" % "flying-saucer-pdf" % "9.0.1",
-  "com.itextpdf" % "itextpdf" % "5.3.0"
+  "org.xhtmlrenderer" % "flying-saucer-pdf" % "9.0.1"
 )
 
 libraryDependencies <+= (sbtVersion) { v =>

@@ -53,6 +53,12 @@ This would first load `cover.html`, then all of the html files in a directory
 called `book` piped to `spdf`. When run with `-i`, spdf expects valid inputs to
 be separated by some kind of whitespace.
 
+## Known Issues
+
+1. Currently, flying saucer will explode trying to paint a grid layout.
+2. The CSS resolver in flying saucer will throw a IOException, if it is given
+   an empty or `null`, `InputStream`.
+
 ## License
 
 Because spdf uses iText for PDF conversion, this application must also be
