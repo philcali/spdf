@@ -24,9 +24,9 @@ can be piped and redirected (in fact, it is encouraged to do so).
 ```
 cat flyer.html | spdf > out.pdf
 
-curl www.google.com | sdf > google.pdf
+curl www.google.com | spdf > google.pdf
 
-lmxml flyer.lmxml | sdf > out.pdf
+lmxml flyer.lmxml | spdf -o out.pdf
 ```
 
 ## Creating Multiple Pages
