@@ -3,6 +3,9 @@ package com.github.philcali
 import xsbti.{ AppMain, AppConfiguration }
 
 import org.xhtmlrenderer.pdf.ITextRenderer
+import org.xhtmlrenderer.pdf.ITextUserAgent
+import org.xhtmlrenderer.pdf.ITextOutputDevice
+
 import java.io.{
   File,
   FileInputStream,
@@ -10,6 +13,8 @@ import java.io.{
 }
 
 import java.net.URL
+import java.net.URI
+
 import util.control.Exception.allCatch
 
 import org.ccil.cowan.tagsoup.jaxp.SAXFactoryImpl
@@ -107,12 +112,21 @@ object Main {
     val is = stream(src)
 
     try {
-      renderer.setDocumentFromString(buildDocument(is).toString, toURL(src))
+      val url = toURL(src)
+
+      resetResourceLoader(renderer, url)
+      renderer.setDocumentFromString(buildDocument(is).toString, url)
       renderer.layout()
       renderer.writeNextDocument()
     } finally {
       is.close()
     }
+  }
+
+  def resetResourceLoader(renderer: ITextRenderer, uri: String) {
+    val callback = new ResourceLoader(renderer.getOutputDevice, uri)
+    callback.setSharedContext(renderer.getSharedContext)
+    renderer.getSharedContext.setUserAgentCallback(callback)
   }
 
   def process(in: Option[Array[String]], out: Option[String]) = {
@@ -126,6 +140,7 @@ object Main {
       val initial = ids.map(_.head).map(stream).getOrElse(System.in)
       val url = ids.map(_.head).map(toURL).getOrElse(toURL(new File(".")))
 
+      resetResourceLoader(renderer, url)
       renderer.setDocumentFromString(buildDocument(initial).toString, url)
       renderer.layout()
       renderer.createPDF(os, false)
@@ -137,8 +152,30 @@ object Main {
 
       renderer.finishPDF()
 
+    } catch {
+      case cast: ClassCastException =>
+        val issue = "http://code.google.com/p/flying-saucer/issues/detail?id=144"
+        println(
+"""[ERROR]: Flying saucer did not like this grid layout.
+  Please vote on this issue: %s""" format issue
+        )
     } finally {
       os.close()
+    }
+  }
+}
+
+class ResourceLoader(output: ITextOutputDevice, base: String) extends ITextUserAgent(output) {
+  override protected def resolveAndOpenStream(uri: String) = {
+    if (base.startsWith("file:") && !(new File(new URI(uri)).exists)) {
+      val str = base.split("/").dropRight(1).mkString("/").replace("file:", "")
+      val uriStr = uri.replace("file:", "")
+
+      val newFile = new File(str, uriStr)
+
+      super.resolveAndOpenStream(newFile.toURI.toURL.toString)
+    } else {
+      super.resolveAndOpenStream(uri)
     }
   }
 }
