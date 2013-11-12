@@ -18,7 +18,7 @@ sdpf -h [file|folder|url...] -i [-o out.pdf]
 The `url` must be in the form of `*://*`. The specified output file must be in
 the form of `*.pdf*`.
 
-The utility was designed to place nice with other CL tools, so input and output
+The utility was designed to play nice with other CL tools, so input and output
 can be piped and redirected (in fact, it is encouraged to do so).
 
 ```
